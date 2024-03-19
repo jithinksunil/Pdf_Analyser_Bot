@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class FileService {
-  uploadPdf() {
+  uploadFile(file: Express.Multer.File) {
     return 'Upload complete';
   }
-  deletePdf() {
+  deleteFile() {
     return 'deleted';
   }
 }
