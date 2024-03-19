@@ -8,24 +8,27 @@ import {
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
-
+    const request = ctx.getRequest();
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const message =
+    let message =
       exception instanceof HttpException
         ? exception.getResponse()
         : {
-            message: 'Server facing issues',
-            error: 'Internal server error',
+            error: exception?.name,
+            message: exception?.message,
             statusCode: status,
           };
-
+    if (typeof message === 'string') {
+      message = { error: message };
+    }
+    message = { ...message, path: request.url };
     response.status(status).json(message);
   }
 }
