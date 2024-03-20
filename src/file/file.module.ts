@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { FileService } from './file.service';
 import { FileController } from './file.controller';
-import { MulterModule } from '../configurations/multer/multer.module';
-
+import { CloudinaryModule } from 'src/configurations/cloudinary/cloudinay.module';
 
 @Module({
-  imports:[MulterModule],
+  imports: [CloudinaryModule],
   providers: [FileService],
-  controllers: [FileController]
+  controllers: [FileController],
 })
 export class FileModule {}
