@@ -6,10 +6,6 @@ export class AnalyserService {
   constructor(private commonService: CommonService) {}
   async getAnswer(filePath: string, question: string) {
     const extractedText = await this.commonService.extractFromFile(filePath);
-    const answer = await this.commonService.analyseWithOpenAi(
-      extractedText,
-      question,
-    );
-    return answer;
+    return await this.commonService.analyseWithAi(extractedText, question);
   }
 }
