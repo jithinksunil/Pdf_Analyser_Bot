@@ -12,4 +12,11 @@ export class AuthController {
       body.refreshToken as string,
     );
   }
+  @Post('/google/drive')
+  getDriveFiles(@Body() body: any) {
+    return this.authService.getDriveFiles(
+      body.accessToken as string,
+      body.refreshToken as string,
+    );
+  }
 }

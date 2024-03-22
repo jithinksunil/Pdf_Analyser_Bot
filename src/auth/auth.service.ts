@@ -15,4 +15,7 @@ export class AuthService {
       throw new UnauthorizedException('Your are not authorized');
     }
   }
+  async getDriveFiles(accessToken: string, refreshToken: string) {
+    return this.googleService.getDriveFiles(accessToken, refreshToken);
+  }
 }
