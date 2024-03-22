@@ -7,8 +7,7 @@ export class AuthService {
   async signinWithGoogle(accessToken: string, refreshToken: string) {
     try {
       const response = await this.googleService.getProfile(
-        accessToken,
-        refreshToken,
+        accessToken
       );
       return { email: response.emailAddress };
     } catch (error) {

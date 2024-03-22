@@ -33,11 +33,11 @@ export class OpenAiService {
           role: 'user',
           content: `Question is ${question}`,
         },
-        {
-          role: 'system',
-          content:
-            'Give the answer now , if you cannot give the exact answer , politely say I am unable to anser the question based the given context',
-        },
+        // {
+        //   role: 'system',
+        //   content:
+        //     'Give the answer now , if you cannot give the exact answer , politely say I am unable to anser the question based the given context',
+        // },
       ],
       model: 'gpt-3.5-turbo',
     });

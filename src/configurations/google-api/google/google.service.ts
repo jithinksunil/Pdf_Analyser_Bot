@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { google } from 'googleapis';
+import { Readable } from 'stream';
 
 @Injectable()
 export class GoogleService {
@@ -15,22 +16,21 @@ export class GoogleService {
     version: 'v1',
     auth: this.oauth2Client,
   });
-  private setCredentials(accessToken: string, refreshToken: string) {
+  private setCredentials(accessToken: string, refreshToken?: string) {
     this.oauth2Client.setCredentials({
       access_token: accessToken,
       refresh_token: refreshToken,
     });
   }
-  async getProfile(accessToken: string, refreshToken: string) {
-    this.setCredentials(accessToken, refreshToken);
+  async getProfile(accessToken: string) {
+    this.setCredentials(accessToken);
     const response = await this.gmail.users.getProfile({
       userId: 'me',
     });
     return response.data;
   }
-  async getFile(accessToken: string, refreshToken: string, fileId2: string) {
-    const fileId = '1hYQx37XC3-WflM7Iqhz3rD8csnmVukx6';
-    this.setCredentials(accessToken, refreshToken);
+  async getFile(accessToken: string, fileId: string) {
+    this.setCredentials(accessToken);
     const drive = google.drive({ version: 'v3', auth: this.oauth2Client });
 
     try {
@@ -42,15 +42,15 @@ export class GoogleService {
         { responseType: 'stream' },
       );
 
-      let pdfBuffer: any = [];
+      let pdfBuffer = [];
       return new Promise((resolve, reject) => {
         response.data
           .on('data', (chunk) => {
             pdfBuffer.push(chunk);
           })
           .on('end', () => {
-            pdfBuffer = Buffer.concat(pdfBuffer);
-            resolve(pdfBuffer);
+            const buffer = Buffer.concat(pdfBuffer);
+            resolve(buffer);
           })
           .on('error', (err) => {
             reject(err);
@@ -58,6 +58,38 @@ export class GoogleService {
       });
     } catch (error) {
       console.error('The API returned an error: ' + error);
+    }
+  }
+  async uploadFileToDrive(accessToken: string, file: Express.Multer.File) {
+    this.setCredentials(accessToken);
+    const drive = google.drive({ version: 'v3', auth: this.oauth2Client });
+    const { originalname, mimetype, buffer } = file;
+
+    const fileMetadata = {
+      name: originalname,
+    };
+
+    const media = {
+      mimeType: mimetype,
+      body: new Readable({
+        read() {
+          this.push(buffer);
+          this.push(null);
+        },
+      }),
+    };
+
+    try {
+      const response = await drive.files.create({
+        requestBody: fileMetadata,
+        media: media,
+        fields: 'id',
+      });
+
+      return response.data.id;
+    } catch (error) {
+      console.error('Failed to upload file to Google Drive:', error);
+      throw error;
     }
   }
 }

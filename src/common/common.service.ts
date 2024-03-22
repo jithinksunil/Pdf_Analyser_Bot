@@ -13,16 +13,8 @@ export class CommonService {
     return await this.openAiService.analyseWithOpenAi(context, question);
   }
 
-  async extractFromFile(
-    accessToken: string,
-    refreshToken: string,
-    fileId: string,
-  ) {
-    let dataBuffer = await this.googleService.getFile(
-      accessToken,
-      refreshToken,
-      fileId,
-    );
+  async extractFromFile(accessToken: string, fileId: string) {
+    let dataBuffer = await this.googleService.getFile(accessToken, fileId);
     const data = await pdf(dataBuffer);
     return data.text;
   }
