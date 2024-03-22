@@ -1,12 +1,7 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { google } from 'googleapis';
-const fs = require('fs');
-import base64Url from 'base64url';
+
 @Injectable()
 export class GoogleService {
   constructor(private config: ConfigService) {}
@@ -33,7 +28,7 @@ export class GoogleService {
     });
     return response.data;
   }
-  async getDriveFiles(accessToken: string, refreshToken: string) {
+  async getFile(accessToken: string, refreshToken: string, fileId2: string) {
     const fileId = '1hYQx37XC3-WflM7Iqhz3rD8csnmVukx6';
     this.setCredentials(accessToken, refreshToken);
     const drive = google.drive({ version: 'v3', auth: this.oauth2Client });
@@ -47,22 +42,20 @@ export class GoogleService {
         { responseType: 'stream' },
       );
 
-      // const filePath = './downloaded_file/test.pdf'; // Path where you want to save the file
-      // const dest = fs.createWriteStream(filePath);
-      let pdfBuffer = [];
-      response.data
-        .on('data', (chunk) => {
-          pdfBuffer.push(chunk);
-          console.log('Download complete.');
-        })
-        .on('end', () => {
-          const buffer = Buffer.concat(pdfBuffer);
-          return buffer;
-        });
-      // .pipe(dest);
-      throw new InternalServerErrorException(
-        'Cannot fetch the file from Drive',
-      );
+      let pdfBuffer: any = [];
+      return new Promise((resolve, reject) => {
+        response.data
+          .on('data', (chunk) => {
+            pdfBuffer.push(chunk);
+          })
+          .on('end', () => {
+            pdfBuffer = Buffer.concat(pdfBuffer);
+            resolve(pdfBuffer);
+          })
+          .on('error', (err) => {
+            reject(err);
+          });
+      });
     } catch (error) {
       console.error('The API returned an error: ' + error);
     }
