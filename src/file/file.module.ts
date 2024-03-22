@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { FileService } from './file.service';
 import { FileController } from './file.controller';
-import { CloudinaryModule } from 'src/configurations/cloudinary/cloudinay.module';
 
 @Module({
-  imports: [CloudinaryModule],
+  imports: [],
   providers: [FileService],
   controllers: [FileController],
 })
