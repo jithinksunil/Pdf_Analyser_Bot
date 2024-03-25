@@ -1,28 +1,34 @@
 import {
-  Body,
   Controller,
   Delete,
+  Headers,
+  Param,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileService } from './file.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileUpload } from 'src/interfaces';
+import { AuthGuard } from 'src/guards/auth.guards';
 
+@UseGuards(AuthGuard)
 @Controller('file')
 export class FileController {
   constructor(private fileService: FileService) {}
-  @Post('upload')
+  @Post('/upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: FileUpload,
+    @Headers('authorization') accessToken: string,
   ) {
-    return await this.fileService.uploadFile(body.accessToken, file);
+    return await this.fileService.uploadFile(file, accessToken);
   }
-  @Delete('delete')
-  deletePdf() {
-    return this.fileService.deleteFile();
+  @Delete('/delete/:id')
+  deletePdf(
+    @Headers('authorization') accessToken: string,
+    @Param('id') fileId: string,
+  ) {
+    return this.fileService.deleteFile(fileId, accessToken);
   }
 }

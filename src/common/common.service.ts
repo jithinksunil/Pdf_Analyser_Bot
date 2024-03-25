@@ -1,21 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { OpenAiService } from 'src/configurations/openAi/openAi.service';
+import { ConfigService } from '@nestjs/config';
+import { GoogleService } from 'src/configurations/google-api/google.service';
 const pdf = require('pdf-parse');
-import { GoogleService } from 'src/configurations/google-api/google/google.service';
 
 @Injectable()
 export class CommonService {
+  googleService: GoogleService;
   constructor(
     private openAiService: OpenAiService,
-    private googleService: GoogleService,
-  ) {}
+    private config: ConfigService,
+  ) {
+    this.googleService = new GoogleService(this.config);
+  }
+
+  async extractFromFile(fileId: string, accessToken: string) {
+    let dataBuffer = await this.googleService.getFile(fileId, accessToken);
+    const data = await pdf(dataBuffer);
+    return data.text;
+  }
+
   async analyseWithAi(context: string, question: string) {
     return await this.openAiService.analyseWithOpenAi(context, question);
   }
-
-  async extractFromFile(accessToken: string, fileId: string) {
-    let dataBuffer = await this.googleService.getFile(accessToken, fileId);
-    const data = await pdf(dataBuffer);
-    return data.text;
+  async uploadFileToCloundServer(
+    file: Express.Multer.File,
+    accessToken: string,
+  ) {
+    return await this.googleService.uploadFileToDrive(file, accessToken);
+  }
+  async deleteFileFromCloundServer(fileId: string, accessToken: string) {
+    return await this.googleService.deleteFile(fileId, accessToken);
   }
 }

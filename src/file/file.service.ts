@@ -1,13 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { GoogleService } from 'src/configurations/google-api/google/google.service';
-import { Readable } from 'stream';
+import { Injectable } from '@nestjs/common';
+import { CommonService } from 'src/common/common.service';
 @Injectable()
 export class FileService {
-  constructor(private googleSericve: GoogleService) {}
-  async uploadFile(accessToken: string, file: Express.Multer.File) {
-    return await this.googleSericve.uploadFileToDrive(accessToken, file);
+  constructor(private commonService: CommonService) {}
+  async uploadFile(file: Express.Multer.File, accessToken: string) {
+    return await this.commonService.uploadFileToCloundServer(file, accessToken);
   }
-  deleteFile() {
-    return 'deleted';
+  deleteFile(fileId: string, accessToken: string) {
+    return this.commonService.deleteFileFromCloundServer(fileId, accessToken);
   }
 }
