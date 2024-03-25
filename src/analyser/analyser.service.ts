@@ -9,6 +9,10 @@ export class AnalyserService {
       fileId,
       accessToken,
     );
-    return await this.commonService.analyseWithAi(extractedText, question);
+    const answer = await this.commonService.analyseWithAi(
+      extractedText,
+      question,
+    );
+    return { answer };
   }
 }

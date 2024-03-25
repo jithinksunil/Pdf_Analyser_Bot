@@ -30,6 +30,12 @@ export class CommonService {
     return await this.googleService.uploadFileToDrive(file, accessToken);
   }
   async deleteFileFromCloundServer(fileId: string, accessToken: string) {
-    return await this.googleService.deleteFile(fileId, accessToken);
+    await this.googleService.deleteFile(fileId, accessToken);
+  }
+  createGoogleSigninUrl() {
+    return this.googleService.createSigninUrl();
+  }
+  async generateGoogleTokens(code: string) {
+    return this.googleService.createTokens(code);
   }
 }

@@ -29,12 +29,11 @@ export class GoogleService {
     });
   }
   createSigninUrl() {
-    const url = this.oauth2Client.generateAuthUrl({
+    return this.oauth2Client.generateAuthUrl({
       access_type: 'offline',
       scope: scopes,
       prompt: 'consent',
     });
-    return { url };
   }
   async createTokens(code: string) {
     const { tokens } = await this.oauth2Client.getToken(code);
@@ -104,7 +103,7 @@ export class GoogleService {
         fields: 'id',
       });
 
-      return { fileId: response.data.id };
+      return response.data.id;
     } catch (error) {
       console.error('Failed to upload file to Google Drive:', error);
       throw error;
@@ -112,7 +111,6 @@ export class GoogleService {
   }
   async deleteFile(fileId: string, accessToken: string) {
     this.setCredentials(accessToken);
-    const res = this.drive.files.delete({ fileId });
-    return { message: 'File deleted successfully' };
+    await this.drive.files.delete({ fileId });
   }
 }

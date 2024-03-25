@@ -4,9 +4,14 @@ import { CommonService } from 'src/common/common.service';
 export class FileService {
   constructor(private commonService: CommonService) {}
   async uploadFile(file: Express.Multer.File, accessToken: string) {
-    return await this.commonService.uploadFileToCloundServer(file, accessToken);
+    const fileId = await this.commonService.uploadFileToCloundServer(
+      file,
+      accessToken,
+    );
+    return { fileId, message: 'Upload completed' };
   }
   deleteFile(fileId: string, accessToken: string) {
-    return this.commonService.deleteFileFromCloundServer(fileId, accessToken);
+    this.commonService.deleteFileFromCloundServer(fileId, accessToken);
+    return { message: 'File downloaded successFully' };
   }
 }

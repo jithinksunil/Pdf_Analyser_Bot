@@ -9,7 +9,7 @@ export class AuthController {
     return this.authService.signinWithGoogle();
   }
   @Get('/google/generate-token')
-  genarateGoogleTokens(@Query() query: { code: string }) {
-    return this.authService.generateGoogleTokens(query.code);
+  async genarateGoogleTokens(@Query() query: { code: string }) {
+    return await this.authService.generateGoogleTokens(query.code);
   }
 }

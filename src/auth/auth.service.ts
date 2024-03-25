@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { GoogleService } from 'src/configurations/google-api/google.service';
+import { CommonService } from 'src/common/common.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private googleService: GoogleService) {}
+  constructor(private commonService: CommonService) {}
   signinWithGoogle() {
-    return this.googleService.createSigninUrl();
+    const url = this.commonService.createGoogleSigninUrl();
+    return { url };
   }
   async generateGoogleTokens(code: string) {
-    return await this.googleService.createTokens(code);
+    const tokens = await this.commonService.generateGoogleTokens(code);
+    return { tokens, message: 'Sign in successfull' };
   }
 }
