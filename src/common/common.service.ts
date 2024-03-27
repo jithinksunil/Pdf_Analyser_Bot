@@ -38,4 +38,7 @@ export class CommonService {
   async generateGoogleTokens(code: string) {
     return this.googleService.createTokens(code);
   }
+  async shakeHandRefreshToken(refreshToken: string) {
+    return this.googleService.shakeHandRefreshToken(refreshToken);
+  }
 }

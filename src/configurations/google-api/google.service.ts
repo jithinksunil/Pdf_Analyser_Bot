@@ -28,6 +28,7 @@ export class GoogleService {
       refresh_token: refreshToken,
     });
   }
+
   createSigninUrl() {
     return this.oauth2Client.generateAuthUrl({
       access_type: 'offline',
@@ -35,6 +36,12 @@ export class GoogleService {
       prompt: 'consent',
     });
   }
+  async shakeHandRefreshToken(refreshToken: string) {
+    this.setCredentials(undefined, refreshToken);
+    const { credentials } = await this.oauth2Client.refreshAccessToken();
+    return credentials;
+  }
+
   async createTokens(code: string) {
     const { tokens } = await this.oauth2Client.getToken(code);
     return tokens;
