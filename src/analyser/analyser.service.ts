@@ -15,4 +15,8 @@ export class AnalyserService {
     );
     return { answer };
   }
+  async getAllPdfFiles(accessToken: string) {
+    const files = await this.commonService.getAllPdfFiles(accessToken);
+    return { files };
+  }
 }

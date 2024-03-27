@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Headers,
   Param,
   Post,
@@ -30,5 +31,9 @@ export class AnalyserController {
     @Param('id') fileId: string,
   ) {
     return this.analyserService.getAnswer(fileId, body.question, accessToken);
+  }
+  @Get('/get-files')
+  getAllPdfFiles(@Headers('authorization') accessToken: string) {
+    return this.analyserService.getAllPdfFiles(accessToken);
   }
 }

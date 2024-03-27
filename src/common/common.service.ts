@@ -41,4 +41,7 @@ export class CommonService {
   async shakeHandRefreshToken(refreshToken: string) {
     return this.googleService.shakeHandRefreshToken(refreshToken);
   }
+  async getAllPdfFiles(accessToken:string){
+    return await this.googleService.getAllPdfFiles(accessToken)
+  }
 }

@@ -84,6 +84,18 @@ export class GoogleService {
       console.error('The API returned an error: ' + error);
     }
   }
+  async getAllPdfFiles(accessToken: string) {
+    this.setCredentials(accessToken);
+    const response = await this.drive.files.list({
+      q: "mimeType='application/pdf'",
+      fields: 'nextPageToken, files(id, name)',
+      spaces: 'drive',
+    });
+    return response.data.files.map(({ id, name }) => ({
+      id,
+      name,
+    }));
+  }
   async uploadFileToDrive(file: Express.Multer.File, accessToken: string) {
     this.setCredentials(accessToken);
 
