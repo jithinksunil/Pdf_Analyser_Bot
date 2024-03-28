@@ -1,4 +1,4 @@
-import { Headers, Injectable } from '@nestjs/common';
+import { Headers, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
@@ -48,16 +48,22 @@ export class GoogleService {
   }
 
   async getProfile(accessToken: string) {
-    this.setCredentials(accessToken);
-    const response = await this.gmail.users.getProfile({
-      userId: 'me',
-    });
-    return response.data;
+    try {
+      this.setCredentials(accessToken);
+      const response = await this.gmail.users.getProfile({
+        userId: 'me',
+      });
+      return response.data;
+    } catch (error) {
+      if (error.status === 401)
+        throw new UnauthorizedException('Invalid access tokens provided');
+      throw new Error(error);
+    }
   }
 
   async getFile(fileId: string, accessToken: string) {
-    this.setCredentials(accessToken);
     try {
+      this.setCredentials(accessToken);
       const response = await this.drive.files.get(
         {
           fileId: fileId,
@@ -81,55 +87,69 @@ export class GoogleService {
           });
       });
     } catch (error) {
-      console.error('The API returned an error: ' + error);
+      if (error.status === 401)
+        throw new UnauthorizedException('Invalid access tokens provided');
+      throw new Error(error);
     }
   }
   async getAllPdfFiles(accessToken: string) {
-    this.setCredentials(accessToken);
-    const response = await this.drive.files.list({
-      q: "mimeType='application/pdf'",
-      fields: 'nextPageToken, files(id, name)',
-      spaces: 'drive',
-    });
-    return response.data.files.map(({ id, name }) => ({
-      id,
-      name,
-    }));
+    try {
+      this.setCredentials(accessToken);
+      const response = await this.drive.files.list({
+        q: "mimeType='application/pdf'",
+        fields: 'nextPageToken, files(id, name)',
+        spaces: 'drive',
+      });
+      return response.data.files.map(({ id, name }) => ({
+        id,
+        name,
+      }));
+    } catch (error) {
+      if (error.status === 401)
+        throw new UnauthorizedException('Invalid access tokens provided');
+      throw new Error(error);
+    }
   }
   async uploadFileToDrive(file: Express.Multer.File, accessToken: string) {
-    this.setCredentials(accessToken);
-
-    const { originalname, mimetype, buffer } = file;
-
-    const fileMetadata = {
-      name: originalname,
-    };
-
-    const media = {
-      mimeType: mimetype,
-      body: new Readable({
-        read() {
-          this.push(buffer);
-          this.push(null);
-        },
-      }),
-    };
-
     try {
+      this.setCredentials(accessToken);
+
+      const { originalname, mimetype, buffer } = file;
+
+      const fileMetadata = {
+        name: originalname,
+      };
+
+      const media = {
+        mimeType: mimetype,
+        body: new Readable({
+          read() {
+            this.push(buffer);
+            this.push(null);
+          },
+        }),
+      };
       const response = await this.drive.files.create({
         requestBody: fileMetadata,
         media: media,
         fields: 'id',
       });
 
-      return response.data.id;
+      return { id: response.data.id, originalname };
     } catch (error) {
-      console.error('Failed to upload file to Google Drive:', error);
-      throw error;
+      if (error.status === 401)
+        throw new UnauthorizedException('Invalid access tokens provided');
+      throw new Error(error);
     }
   }
   async deleteFile(fileId: string, accessToken: string) {
-    this.setCredentials(accessToken);
-    await this.drive.files.delete({ fileId });
+    try {
+      this.setCredentials(accessToken);
+      await this.drive.files.delete({ fileId });
+    } catch (error) {
+      if (error.status === 401)
+        throw new UnauthorizedException('Invalid access tokens provided');
+      throw new Error(error);
+    }
   }
 }

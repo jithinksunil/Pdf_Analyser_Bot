@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Headers,
@@ -19,6 +20,7 @@ export class FileController {
   @Post('/upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
+    @Body() body:any,
     @UploadedFile() file: Express.Multer.File,
     @Headers('authorization') accessToken: string,
   ) {
