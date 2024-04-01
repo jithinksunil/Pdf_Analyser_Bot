@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { FileService } from './file.service';
 import { FileController } from './file.controller';
-import { CommonModule } from 'src/common/common.module';
+import { GoogleModule } from 'src/configurations/google-api/google.module';
 
 @Module({
-  imports: [CommonModule],
+  imports: [GoogleModule],
   providers: [FileService],
   controllers: [FileController],
 })
