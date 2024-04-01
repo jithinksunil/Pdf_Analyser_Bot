@@ -36,4 +36,8 @@ export class AnalyserController {
   getAllPdfFiles(@Headers('authorization') accessToken: string) {
     return this.analyserService.getAllPdfFiles(accessToken);
   }
+  @Get('/get-questions/:id')
+  getAllQuestions(@Param('id') fileId: string) {
+    return this.analyserService.getAllQuestions(fileId);
+  }
 }
