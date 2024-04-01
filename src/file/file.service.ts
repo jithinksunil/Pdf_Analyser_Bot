@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CommonService } from 'src/common/common.service';
+import { GoogleService } from 'src/configurations/google-api/google.service';
 @Injectable()
 export class FileService {
-  constructor(private commonService: CommonService) {}
+  constructor(private googleService: GoogleService) {}
   async uploadFile(file: Express.Multer.File, accessToken: string) {
     const { id: fileId, originalname: name } =
-      await this.commonService.uploadFileToCloundServer(file, accessToken);
+      await this.googleService.uploadFileToDrive(file, accessToken);
     return { fileId, name, message: 'Upload completed' };
   }
   deleteFile(fileId: string, accessToken: string) {
-    this.commonService.deleteFileFromCloundServer(fileId, accessToken);
+    this.googleService.deleteFile(fileId, accessToken);
     return { message: 'File downloaded successFully' };
   }
 }
