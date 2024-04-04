@@ -5,6 +5,7 @@ import {
   Headers,
   Param,
   Post,
+  Req,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -33,8 +34,11 @@ export class AnalyserController {
     return this.analyserService.getAnswer(fileId, body.question, accessToken);
   }
   @Get('/get-files')
-  getAllPdfFiles(@Headers('authorization') accessToken: string) {
-    return this.analyserService.getAllPdfFiles(accessToken);
+  getAllPdfFiles(@Req() request: Request) {
+    const {
+      user: { email, accessToken },
+    } = request as Request & { user: { accessToken: string; email: string } };
+    return this.analyserService.getAllPdfFiles(accessToken, email);
   }
   @Get('/get-questions/:id')
   getAllQuestions(@Param('id') fileId: string) {

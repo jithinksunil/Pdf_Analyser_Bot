@@ -17,10 +17,12 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Your are unauthorized');
     }
     const googleService = this.moduleRef.get(GoogleService, { strict: false });
-    const email = await googleService.getProfile(accessToken);
-    if (!email) {
+    const profile = await googleService.getProfile(accessToken);
+    if (!profile) {
       throw new UnauthorizedException('Your are unauthorized, Sign in again');
     }
+    request.user = { email: profile.emailAddress, accessToken };
+
     return true;
   }
 }

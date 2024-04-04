@@ -43,9 +43,9 @@ export class AnalyserService {
     });
     return { questions: file.questions };
   }
-  async getAllPdfFiles(accessToken: string) {
+  async getAllPdfFiles(accessToken: string, email: string) {
     const files = await this.googleService.getAllPdfFiles(accessToken);
-    return { files };
+    return { files, email };
   }
 
   async getAllQuestions(fileId: string) {
@@ -54,7 +54,7 @@ export class AnalyserService {
       select: { questions: true },
     });
     console.log(file);
-    
+
     return { questions: file?.questions || [] };
   }
 }
