@@ -10,6 +10,6 @@ export class FileService {
   }
   deleteFile(fileId: string, accessToken: string) {
     this.googleService.deleteFile(fileId, accessToken);
-    return { message: 'File downloaded successFully' };
+    return { message: 'File deleted' };
   }
 }
