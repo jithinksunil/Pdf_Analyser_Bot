@@ -19,23 +19,18 @@ export class AnalyserService {
       fileId,
       accessToken,
     );
-    const answer = await this.OpenAiService.analyseWithOpenAi(
-      extractedText,
-      question,
-    );
     let file = await this.prisma.file.findUnique({
       where: { gDriveId: fileId },
       select: { questions: true },
     });
-    console.log(file);
+    const previousQuestions: string[] =
+      file?.questions.map((item) => item.question) || [];
 
-    if (!file) {
-      file = await this.prisma.file.create({
-        data: { gDriveId: fileId, questions: { create: { question, answer } } },
-        select: { questions: true },
-      });
-      return { questions: file.questions };
-    }
+    const answer = await this.OpenAiService.analyseWithOpenAi(
+      extractedText,
+      question,
+      previousQuestions,
+    );
     file = await this.prisma.file.update({
       where: { gDriveId: fileId },
       data: { questions: { create: { question, answer } } },
@@ -53,7 +48,6 @@ export class AnalyserService {
       where: { gDriveId: fileId },
       select: { questions: true },
     });
-    console.log(file);
 
     return { questions: file?.questions || [] };
   }
