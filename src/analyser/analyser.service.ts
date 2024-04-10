@@ -23,8 +23,20 @@ export class AnalyserService {
       where: { gDriveId: fileId },
       select: { questions: true },
     });
-    const previousQuestions: string[] =
-      file?.questions.map((item) => item.question) || [];
+    if (!file) {
+      file = await this.prisma.file.create({
+        data: {
+          gDriveId: fileId,
+        },
+        select: {
+          questions: true,
+        },
+      });
+    }
+
+    const previousQuestions: string[] = file.questions.map(
+      (item) => item.question,
+    );
 
     const answer = await this.OpenAiService.analyseWithOpenAi(
       extractedText,
