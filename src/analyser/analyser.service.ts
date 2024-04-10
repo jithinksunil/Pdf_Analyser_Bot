@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { File, Question } from '@prisma/client';
-import { create } from 'domain';
 import { CommonService } from 'src/common/common.service';
 import { GoogleService } from 'src/configurations/google-api/google.service';
 import { OpenAiService } from 'src/configurations/openAi/openAi.service';
