@@ -1,4 +1,4 @@
-import { Headers, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
@@ -146,6 +146,7 @@ export class GoogleService {
     try {
       this.setCredentials(accessToken);
       await this.drive.files.delete({ fileId });
+      return { id: fileId };
     } catch (error) {
       if (error.status === 401)
         throw new UnauthorizedException('Invalid access tokens provided');
