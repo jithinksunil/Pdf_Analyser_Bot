@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Headers,
   Param,
   Post,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -20,7 +22,7 @@ export class FileController {
   @Post('/upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
-    @Body() body:any,
+    @Body() body: any,
     @UploadedFile() file: Express.Multer.File,
     @Headers('authorization') accessToken: string,
   ) {
@@ -32,5 +34,13 @@ export class FileController {
     @Param('id') fileId: string,
   ) {
     return this.fileService.deleteFile(fileId, accessToken);
+  }
+
+  @Get('/download/:id')
+  downloadPdf(
+    @Headers('authorization') accessToken: string,
+    @Param('id') fileId: string,
+  ) {
+    return this.fileService.downloadFile(fileId, accessToken);
   }
 }

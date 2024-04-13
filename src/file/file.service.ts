@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { Response } from 'express';
 import { GoogleService } from 'src/configurations/google-api/google.service';
 @Injectable()
 export class FileService {
@@ -14,5 +15,13 @@ export class FileService {
   deleteFile(fileId: string, accessToken: string) {
     this.googleService.deleteFile(fileId, accessToken);
     return { message: 'File deleted' };
+  }
+
+  async downloadFile(fileId: string, accessToken: string) {
+    const publicUrl = await this.googleService.getFilePublickLink(
+      fileId,
+      accessToken,
+    );
+    return { message: 'File downloaded', publicUrl };
   }
 }

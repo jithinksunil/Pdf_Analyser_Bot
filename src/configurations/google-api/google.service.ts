@@ -1,7 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
 import { google } from 'googleapis';
 import { Readable } from 'stream';
+import * as fs from 'fs';
 const scopes = [
   'https://www.googleapis.com/auth/gmail.readonly',
   'https://www.googleapis.com/auth/gmail.send',
@@ -147,6 +149,22 @@ export class GoogleService {
       this.setCredentials(accessToken);
       await this.drive.files.delete({ fileId });
       return { id: fileId };
+    } catch (error) {
+      if (error.status === 401)
+        throw new UnauthorizedException('Invalid access tokens provided');
+      throw new Error(error);
+    }
+  }
+
+  async getFilePublickLink(fileId: string, accessToken: string) {
+    try {
+      this.setCredentials(accessToken);
+      const res = await this.drive.files.get({
+        fileId,
+        fields: 'webViewLink',
+      });
+      const webViewLink = res.data.webViewLink;
+      return webViewLink;
     } catch (error) {
       if (error.status === 401)
         throw new UnauthorizedException('Invalid access tokens provided');
