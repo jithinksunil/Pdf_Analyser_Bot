@@ -8,9 +8,9 @@ export class FileService {
     if (file.mimetype !== 'application/pdf')
       throw new BadRequestException('Only pdf files can be uploaded');
 
-    const { id: fileId, originalname: name } =
+    const { id, originalname: name } =
       await this.googleService.uploadFileToDrive(file, accessToken);
-    return { fileId, name, message: 'Upload completed' };
+    return { id, name, message: 'Upload completed' };
   }
   async deleteFile(fileId: string, accessToken: string) {
     await this.googleService.deleteFile(fileId, accessToken);
