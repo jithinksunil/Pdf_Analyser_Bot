@@ -21,4 +21,9 @@ export class AuthService {
       await this.googleService.shakeHandRefreshToken(refreshToken);
     return { accessToken: access_token, refreshToken: refresh_token };
   }
+
+  async getProfile(accessToken: string) {
+    const res = await this.googleService.getProfile(accessToken);
+    return { email: res.emailAddress };
+  }
 }

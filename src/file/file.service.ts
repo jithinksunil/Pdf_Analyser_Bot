@@ -12,8 +12,8 @@ export class FileService {
       await this.googleService.uploadFileToDrive(file, accessToken);
     return { fileId, name, message: 'Upload completed' };
   }
-  deleteFile(fileId: string, accessToken: string) {
-    this.googleService.deleteFile(fileId, accessToken);
+  async deleteFile(fileId: string, accessToken: string) {
+    await this.googleService.deleteFile(fileId, accessToken);
     return { message: 'File deleted' };
   }
 

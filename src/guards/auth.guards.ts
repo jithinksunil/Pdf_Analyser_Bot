@@ -21,7 +21,6 @@ export class AuthGuard implements CanActivate {
     if (!profile) {
       throw new UnauthorizedException('Your are unauthorized, Sign in again');
     }
-    request.user = { email: profile.emailAddress, accessToken };
 
     return true;
   }

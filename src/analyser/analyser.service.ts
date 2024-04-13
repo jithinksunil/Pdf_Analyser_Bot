@@ -48,9 +48,9 @@ export class AnalyserService {
     });
     return { questions: file.questions };
   }
-  async getAllPdfFiles(accessToken: string, email: string) {
+  async getAllPdfFiles(accessToken: string) {
     const files = await this.googleService.getAllPdfFiles(accessToken);
-    return { files, email };
+    return { files };
   }
 
   async getAllQuestions(fileId: string) {

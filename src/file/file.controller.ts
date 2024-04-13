@@ -21,11 +21,11 @@ export class FileController {
   constructor(private fileService: FileService) {}
   @Post('/upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(
+  uploadFile(
     @UploadedFile() file: Express.Multer.File,
     @Headers('authorization') accessToken: string,
   ) {
-    return await this.fileService.uploadFile(file, accessToken);
+    return this.fileService.uploadFile(file, accessToken);
   }
   @Delete('/delete/:id')
   deletePdf(

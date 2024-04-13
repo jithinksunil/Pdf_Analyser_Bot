@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Patch, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -9,11 +9,17 @@ export class AuthController {
     return this.authService.signinWithGoogle();
   }
   @Get('/google/generate-token')
-  async genarateGoogleTokens(@Query() query: { code: string }) {
-    return await this.authService.generateGoogleTokens(query.code);
+  genarateGoogleTokens(@Query() query: { code: string }) {
+    return this.authService.generateGoogleTokens(query.code);
   }
+
   @Patch('/google/refresh')
-  async newAccessToken(@Body() body: { refreshToken: string }) {
-    return await this.authService.newAccessToken(body.refreshToken);
+  newAccessToken(@Body() body: { refreshToken: string }) {
+    return this.authService.newAccessToken(body.refreshToken);
+  }
+
+  @Get('/profile')
+  getProfile(@Headers('authorization') accessToken: string) {
+    return this.authService.getProfile(accessToken);
   }
 }
