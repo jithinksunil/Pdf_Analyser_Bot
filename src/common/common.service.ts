@@ -5,10 +5,7 @@ const pdf = require('pdf-parse');
 
 @Injectable()
 export class CommonService {
-  googleService: GoogleService;
-  constructor(private config: ConfigService) {
-    this.googleService = new GoogleService(this.config);
-  }
+  constructor(private googleService: GoogleService) {}
 
   async extractFromFile(fileId: string, accessToken: string) {
     let dataBuffer = await this.googleService.getFile(fileId, accessToken);

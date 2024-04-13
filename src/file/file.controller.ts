@@ -22,7 +22,6 @@ export class FileController {
   @Post('/upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
-    @Body() body: any,
     @UploadedFile() file: Express.Multer.File,
     @Headers('authorization') accessToken: string,
   ) {
@@ -38,8 +37,8 @@ export class FileController {
 
   @Get('/download/:id')
   downloadPdf(
-    @Headers('authorization') accessToken: string,
     @Param('id') fileId: string,
+    @Headers('authorization') accessToken: string,
   ) {
     return this.fileService.downloadFile(fileId, accessToken);
   }
