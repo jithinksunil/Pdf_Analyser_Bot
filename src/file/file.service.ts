@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Response } from 'express';
 import { GoogleService } from 'src/configurations/google-api/google.service';
 @Injectable()
 export class FileService {
