@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { GoogleService } from 'src/configurations/google-api/google.service';
 
 @Injectable()
@@ -9,6 +9,7 @@ export class AuthService {
     return { url };
   }
   async generateGoogleTokens(code: string) {
+    if (!code) throw new BadRequestException('Code not present');
     const { access_token, refresh_token } =
       await this.googleService.createTokens(code);
     return {

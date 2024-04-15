@@ -1,5 +1,15 @@
-import { Body, Controller, Get, Headers, Patch, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  Patch,
+  Query,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { RefreshTokenDto } from './dto/refreshToken.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -12,9 +22,15 @@ export class AuthController {
   genarateGoogleTokens(@Query() query: { code: string }) {
     return this.authService.generateGoogleTokens(query.code);
   }
-
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  )
   @Patch('/google/refresh')
-  newAccessToken(@Body() body: { refreshToken: string }) {
+  newAccessToken(@Body() body: RefreshTokenDto) {
     return this.authService.newAccessToken(body.refreshToken);
   }
 
