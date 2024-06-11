@@ -3,7 +3,7 @@ import {
   Controller,
   Get,
   Headers,
-  Patch,
+  Post,
   Query,
   UsePipes,
   ValidationPipe,
@@ -29,7 +29,7 @@ export class AuthController {
       transform: true,
     }),
   )
-  @Patch('/google/refresh')
+  @Post('/google/refresh')
   newAccessToken(@Body() body: RefreshTokenDto) {
     return this.authService.newAccessToken(body.refreshToken);
   }

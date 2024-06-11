@@ -18,9 +18,9 @@ export class AuthService {
     };
   }
   async newAccessToken(refreshToken: string) {
-    const { access_token, refresh_token } =
+    const { access_token } =
       await this.googleService.shakeHandRefreshToken(refreshToken);
-    return { accessToken: access_token, refreshToken: refresh_token };
+    return { accessToken: access_token, message:'Already Signed in' };
   }
 
   async getProfile(accessToken: string) {
