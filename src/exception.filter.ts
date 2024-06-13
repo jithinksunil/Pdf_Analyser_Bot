@@ -29,6 +29,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       message = { error: message };
     }
     message = { ...message, path: request.url };
+    console.log(message);
+
     response.status(status).json(message);
   }
 }
