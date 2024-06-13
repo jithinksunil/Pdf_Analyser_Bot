@@ -1,5 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { GoogleService } from 'src/configurations/google-api/google.service';
+import * as pdftopic from 'pdftopic';
+import * as fs from 'fs';
+
 @Injectable()
 export class FileService {
   constructor(private googleService: GoogleService) {}
@@ -9,6 +12,15 @@ export class FileService {
 
     const { id, originalname: name } =
       await this.googleService.uploadFileToDrive(file, accessToken);
+    const imageBuffers = await pdftopic
+      .pdftobuffer(file.buffer, 'all')
+      .then((buffers) => buffers.map((buffer) => buffer.toString('base64')));
+    imageBuffers.map((buffer, index) =>
+      fs.writeFile(`${index}.jpg`, buffer, (err) => {
+        if (err) throw err;
+        console.log('The image has been saved!');
+      }),
+    );
     return { id, name, message: 'Upload completed' };
   }
   async deleteFile(fileId: string, accessToken: string) {
